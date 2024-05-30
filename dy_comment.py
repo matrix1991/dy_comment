@@ -5,12 +5,12 @@ from common.log import logger
 
 API_URL = "https://api.pearktrue.cn/api/dy/comment/"
 
-@register(name="DouYinCommentFetcher",
+@register(name="dy_comment",
           desc="抖音评论获取插件",
           version="1.0",
-          author="Your Name",
+          author="wanzi",
           desire_priority=100)
-class DouYinCommentFetcher(Plugin):
+class dy_comment(Plugin):
     def __init__(self):
         super().__init__()
         self.handlers[Event.ON_HANDLE_CONTEXT] = self.on_handle_context
@@ -56,7 +56,7 @@ class DouYinCommentFetcher(Plugin):
             return None
 
 if __name__ == "__main__":
-    plugin = DouYinCommentFetcher()
+    plugin = dy_comment()
     # Example usage: to simulate, we directly call the fetch method
     result = plugin.fetch_comments("123456")
     if result:
