@@ -1,1 +1,1 @@
-from dy_comment import *
+from .dy_comment import *
