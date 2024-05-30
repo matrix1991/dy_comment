@@ -6,12 +6,12 @@ from common.log import logger
 
 API_URL = "https://api.pearktrue.cn/api/dy/comment/"
 
-@register(name="dy_comment",
+@register(name="DyCommentPlugin",
           desc="抖音评论获取插件",
           version="1.0",
           author="wanzi",
           desire_priority=100)
-class dy_comment(Plugin):
+class DyCommentPlugin(Plugin):
     def __init__(self):
         super().__init__()
         self.handlers[Event.ON_HANDLE_CONTEXT] = self.on_handle_context
@@ -22,21 +22,30 @@ class dy_comment(Plugin):
 
     def on_handle_context(self, e_context: EventContext):
         if e_context['context'].type != ContextType.TEXT:
+            logger.info(f"[{__class__.__name__}] Ignored non-text context")
             return
         content = e_context["context"].content.strip()
         if content.startswith("评论"):
-            video_id = content.split()[1]  # 假设命令是 "评论 123456"
-            logger.info(f"[{__class__.__name__}] Received message: {content}")
-            reply = Reply()
-            result = self.fetch_comments(video_id)
-            if result is not None:
-                reply.type = ReplyType.TEXT
-                reply.content = str(result)  # 将评论数据转为字符串形式
-                e_context["reply"] = reply
-                e_context.action = EventAction.BREAK_PASS
-            else:
+            try:
+                video_id = content.split()[1]  # 假设命令是 "评论 123456"
+                logger.info(f"[{__class__.__name__}] Received message: {content}")
+                reply = Reply()
+                result = self.fetch_comments(video_id)
+                if result is not None:
+                    reply.type = ReplyType.TEXT
+                    reply.content = str(result)  # 将评论数据转为字符串形式
+                    e_context["reply"] = reply
+                    e_context.action = EventAction.BREAK_PASS
+                else:
+                    reply.type = ReplyType.ERROR
+                    reply.content = "Failed to fetch comments, please try later."
+                    e_context["reply"] = reply
+                    e_context.action = EventAction.BREAK_PASS
+            except Exception as e:
+                logger.error(f"[{__class__.__name__}] Error processing message: {e}")
+                reply = Reply()
                 reply.type = ReplyType.ERROR
-                reply.content = "Failed to fetch comments, please try later."
+                reply.content = "An error occurred while processing your request."
                 e_context["reply"] = reply
                 e_context.action = EventAction.BREAK_PASS
 
@@ -56,7 +65,7 @@ class dy_comment(Plugin):
             return None
 
 if __name__ == "__main__":
-    plugin = dy_comment()
+    plugin = DyCommentPlugin()
     # Example usage: to simulate, we directly call the fetch method
     result = plugin.fetch_comments("123456")
     if result:
