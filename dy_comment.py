@@ -1,7 +1,7 @@
 import requests
 from plugins import Plugin, register
-from bridge.reply import Reply, ReplyType
 from bridge.context import Event, EventContext, ContextType, EventAction
+from bridge.reply import Reply, ReplyType
 from common.log import logger
 
 API_URL = "https://api.pearktrue.cn/api/dy/comment/"
