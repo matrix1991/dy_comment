@@ -1,6 +1,7 @@
 import requests
 from plugins import Plugin, register
 from bridge.reply import Reply, ReplyType
+from bridge.context import Event, EventContext, ContextType, EventAction
 from common.log import logger
 
 API_URL = "https://api.pearktrue.cn/api/dy/comment/"
@@ -17,10 +18,9 @@ class dy_comment(Plugin):
         logger.info(f"[{__class__.__name__}] initialized")
 
     def get_help_text(self, **kwargs):
-        help_text = "发送【评论】加视频ID获取抖音视频评论"
-        return help_text
+        return "发送【评论】加视频ID获取抖音视频评论"
 
-    def on_handle_context(self, e_context):
+    def on_handle_context(self, e_context: EventContext):
         if e_context['context'].type != ContextType.TEXT:
             return
         content = e_context["context"].content.strip()
